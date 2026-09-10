@@ -3,13 +3,17 @@
 A single-file web app for tallying volleyball serves from the sideline —
 built to replace a paper stat sheet.
 
+Live: https://cday413-source.github.io/SCS-Gators/
+
 ## Using it
 
 Open `index.html` in any browser, or add it to a phone home screen. No build
-step, no server, no dependencies, no sign-in. Works offline.
+step, no server, no dependencies, no sign-in, and **no network** — fonts and
+all are embedded in the one file, so it works in a gym with no signal.
 
-1. **Team** — name the team, then add your players (there is a "Paste a whole
-   roster" box that takes one player per line, number first).
+1. **Team** — name the team, then add your players. Names are optional: a
+   roster of bare jersey numbers works fine, and there is a "Paste a whole
+   roster" box that takes one player per line.
 2. **Track** — pick Overhand or Underhand, tap the player who is serving, then
    tap the result: **Ace**, **Over**, **Short**, or **Out**. Undo removes the
    most recent tap.
@@ -25,6 +29,29 @@ Keyboard shortcuts while a player is selected: `A` ace, `O` over, `S` short,
 Every tap is one serve. **Over** is any serve that cleared the net and stayed
 in; aces are included in the Over total and also counted on their own, so
 `serves = over + short + out`.
+
+## Handing a game between phones
+
+If someone else covers a game, they send you a **share code** from the Stats
+tab and you paste it into yours. The code carries jersey numbers and counts
+only — never a name — so it is safe to text to anyone:
+
+```
+SERVES1 2026-09-12 Trinity
+12 1,1,0,0,0,0,0,0
+29 0,0,1,1,0,0,0,0
+```
+
+Line 1 is the tag, the date, and an optional opponent. Each following line is
+a jersey number and eight counts, in the order
+`overhand ace,over,short,out` then `underhand ace,over,short,out`.
+
+On import the app matches by jersey number, adds any number it has not seen
+before as a nameless player you can name later, and lets you drop the game in
+as a new one or merge it into the game on screen. Importing the same code
+twice doubles the counts, so it asks before merging.
+
+CSV export is the separate, spreadsheet-facing format and does include names.
 
 ## Where the data lives
 
