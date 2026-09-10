@@ -11,9 +11,11 @@ Open `index.html` in any browser, or add it to a phone home screen. No build
 step, no server, no dependencies, no sign-in, and **no network** — fonts and
 all are embedded in the one file, so it works in a gym with no signal.
 
-1. **Team** — name the team, then add your players. Names are optional: a
-   roster of bare jersey numbers works fine, and there is a "Paste a whole
-   roster" box that takes one player per line.
+1. **Team** — the roster comes pre-loaded with the squad's jersey numbers and
+   no names, so a first-time visitor can start tapping without entering
+   anything. Names are optional throughout; add or edit players here, and
+   there is a "Paste a whole roster" box that takes one player per line.
+   The numbers live in `SEED_NUMBERS` near the top of the script.
 2. **Track** — pick Overhand or Underhand, tap the player who is serving, then
    tap the result: **Ace**, **Over**, **Short**, or **Out**. Undo removes the
    most recent tap.

@@ -164,6 +164,7 @@ main{flex:1;padding-bottom:20px}
 }
 .pinfo{min-width:0;flex:1}
 .pname{font-size:14px;font-weight:600;line-height:1.18;overflow-wrap:anywhere}
+.pstat.solo{font-size:12.5px;margin-top:0}
 .pstat{font-size:11px;color:var(--muted);letter-spacing:.02em;font-variant-numeric:tabular-nums;margin-top:2px}
 
 /* ---------- tap pad ---------- */
@@ -324,6 +325,16 @@ var RESULTS = [
 ];
 var RLABEL = {ace:'Ace', over:'Over', short:'Short', out:'Out'};
 var TLABEL = {o:'Overhand', u:'Underhand'};
+
+/* ============ first run ============ */
+/* Jersey numbers only -- no names, nothing identifying -- so whoever opens
+   this can start tapping immediately. Edit the roster in the Team tab. */
+var SEED_NUMBERS = ['6','10','11','12','13','18','19','20','21','29'];
+function seedRoster(){
+  return SEED_NUMBERS.map(function(n){
+    return {id:'n'+n, num:n, name:'', grade:'', active:true};
+  });
+}
 
 /* ============ state ============ */
 var S = {
@@ -630,9 +641,11 @@ function viewTrack(root){
     b.setAttribute('aria-pressed', S.sel===p.id?'true':'false');
     b.appendChild(el('span','pnum',p.num));
     var info=el('div','pinfo');
-    info.appendChild(el('div','pname',pLabel(p)));
+    var nm=pName(p);
+    if(nm) info.appendChild(el('div','pname',nm));
     var g = pct(t.good,t.serves);
-    info.appendChild(el('div','pstat', t.serves ? (t.serves+' served · '+g+'% over') : 'no serves yet'));
+    var st=el('div','pstat'+(nm?'':' solo'), t.serves ? (t.serves+' served · '+g+'% over') : 'no serves yet');
+    info.appendChild(st);
     b.appendChild(info);
     b.onclick=function(){ S.sel = (S.sel===p.id?null:p.id); render(); };
     grid.appendChild(b);
@@ -674,7 +687,7 @@ function matchBar(m){
     sm.forEach(function(x){
       var o=document.createElement('option');
       o.value=x.id; o.selected=(x.id===S.currentId);
-      o.textContent=fmtDate(x.date)+' — '+(x.opponent||'Untitled');
+      o.textContent=fmtDate(x.date)+(x.opponent?' — '+x.opponent:'');
       sel.appendChild(o);
     });
     sel.onchange=function(){ S.currentId=sel.value; S.sel=null; saveLocal(); render(); };
@@ -719,7 +732,7 @@ function viewStats(root){
   scopeWrap.appendChild(seg);
   if(S.scope==='match'){
     var m=curMatch();
-    var cap=el('p','eyebrow', m ? (fmtDate(m.date)+' · '+(m.opponent||'Untitled game')) : 'No game selected');
+    var cap=el('p','eyebrow', m ? (fmtDate(m.date)+(m.opponent?' · '+m.opponent:'')) : 'No game selected');
     cap.style.margin='10px 2px 0'; scopeWrap.appendChild(cap);
   }else{
     var c2=el('p','eyebrow', S.matches.length+(S.matches.length===1?' game':' games')+' recorded');
@@ -1228,6 +1241,12 @@ document.addEventListener('keydown', function(e){
 });
 
 hadLocal=loadLocal();
+if(!hadLocal){
+  S.roster=seedRoster();
+  var first={id:uid('m-'), date:todayISO(), opponent:'', createdAt:Date.now(), log:{}};
+  S.matches=[first]; S.currentId=first.id;
+  saveLocal();   /* local only -- an account copy, if there is one, still wins */
+}
 if(!curMatch() && S.matches.length) S.currentId=sortedMatches()[0].id;
 loadSyncState();
 render();
